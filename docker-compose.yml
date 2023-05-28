@@ -1,18 +1,37 @@
 version: '3'
 services:
-  client:
+  chat-client:
     build:
       context: .
       dockerfile: docker/Dockerfile.client
-    ports:
-      - "8081:80"
-  server:
+    container_name: chat-client
+    # ports:
+    #   - "8084:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chat-client-insecure.rule=Host(`chat.auto-gpt.tech`)"
+      - "traefik.http.routers.chat-client-insecure.entrypoints=web"
+      - "traefik.http.middlewares.chat-client-redirect-web-secure.redirectscheme.scheme=https"
+      - "traefik.http.routers.chat-client-insecure.middlewares=chat-client-redirect-web-secure"
+      - "traefik.http.routers.chat-client.rule=Host(`chat.auto-gpt.tech`)"
+      - "traefik.http.routers.chat-client.entrypoints=websecure"
+      - "traefik.http.routers.chat-client.tls=true"
+      - "traefik.http.routers.chat-client.tls.certresolver=myresolver"
+      - "traefik.http.routers.chat-client.middlewares=chat-client_auth"
+      - "traefik.http.middlewares.chat-client_auth.basicauth.users=falktron:$$2y$$05$$8GUJU2uOvVTvb4cod1WpBOQmDhgVy7p.sB3m17zC8.q/.iy/j4tfq"
+    networks:
+      - auto-gpt.tech
+  chat-server:
     build:
       context: .
       dockerfile: docker/Dockerfile.server
+    container_name: chat-server
     ports:
-      - "8080:8080"
+      - "8089:8080"
     volumes:
       - ./data:/server/static
       - ./logs:/server/logs
 
+networks:
+  auto-gpt.tech:
+    external: true
