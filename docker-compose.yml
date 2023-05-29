@@ -21,6 +21,7 @@ services:
       - "traefik.http.middlewares.chat-client_auth.basicauth.users=falktron:$$2y$$05$$8GUJU2uOvVTvb4cod1WpBOQmDhgVy7p.sB3m17zC8.q/.iy/j4tfq"
     networks:
       - auto-gpt.tech
+      - default
   chat-server:
     build:
       context: .
@@ -31,6 +32,8 @@ services:
     volumes:
       - ./data:/server/static
       - ./logs:/server/logs
+    networks:
+      - default
 
 networks:
   auto-gpt.tech:
