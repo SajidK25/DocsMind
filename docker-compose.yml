@@ -6,7 +6,7 @@ services:
       dockerfile: docker/Dockerfile.client
     container_name: chat-client
     ports:
-      - "8084:80"
+      - "5173:5173"
     # labels:
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.chat-client-insecure.rule=Host(`chat.auto-gpt.tech`)"
